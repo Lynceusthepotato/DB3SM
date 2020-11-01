@@ -34,6 +34,17 @@ public class mainUI {
     private JButton registerButton;
     private JTextField staffNameTextField;
     private JTextField passwordTextField;
+    private JTextField registerNameTF;
+    private JTextField emailTF;
+    private JTextField ageTF;
+    private JTextField telephoneTF;
+    private JRadioButton maleRadioButton;
+    private JRadioButton femaleRadioButton;
+    private JRadioButton otherRadioButton;
+    private JButton backButton1;
+    private JButton signUpButton;
+    private JTextField addressTF;
+    private JPanel registerPanel;
 
     Set<String> password = new HashSet<String>();
 
@@ -48,10 +59,12 @@ public class mainUI {
         // Data catch from SQL
         fetch();
 
-        // Data
+        // Data to start
         createSortCombo();
         createOrderCombo();
         setPassword(); // IDK
+        visibilityatStart();
+
 
         sortCombo.addActionListener(new ActionListener() {
             @Override
@@ -120,10 +133,49 @@ public class mainUI {
                 loginCheck();
             }
         });
+
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visibilitytoRegister();
+            }
+        });
+
+        // Register menu
+
+        signUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                toRegister();
+            }
+        });
+
+
+        backButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visibilityatStart();
+            }
+        });
     }
 
     public JPanel getMainPanel() {
         return mainPanel;
+    }
+
+    public void visibilityatStart() {
+        loginMenu.setVisible(true);
+        menuPanel.setVisible(false);
+        registerPanel.setVisible(false);
+        productPanel.setVisible(false);
+
+    }
+
+    public void visibilitytoRegister(){
+        loginMenu.setVisible(false);
+        menuPanel.setVisible(false);
+        registerPanel.setVisible(true);
+        productPanel.setVisible(false);
     }
 
     public void fetch(){
@@ -244,4 +296,45 @@ public class mainUI {
             JOptionPane.showMessageDialog(null, "Your input is incorrect");
         }
     }
+
+    public void toRegister() {
+        try {
+            conDB.connection = DriverManager.getConnection(conDB.url, conDB.user, conDB.password);
+            String q = ("insert into staff(staffID, name, email, age, gender, address, telephone) values (?,?,?,?,?,?,?)");
+
+            String findID = ("Select max(staffID) as staffID from staff");
+            PreparedStatement pst2 = conDB.connection.prepareStatement(findID);
+            conDB.result = pst2.executeQuery();
+
+            int bigNum = 1;
+            if (conDB.result.next()){
+                bigNum  = conDB.result.getInt("staffID");
+                bigNum += 1;
+            }
+
+            PreparedStatement pst = conDB.connection.prepareStatement(q);
+
+            pst.setString(1, String.valueOf(bigNum));
+            pst.setString(2, registerNameTF.getText());
+            pst.setString(3, emailTF.getText());
+            String gender = "";
+            if (maleRadioButton.isSelected()) {
+                gender = "Male";
+            } else if (femaleRadioButton.isSelected()) {
+                gender = "Female";
+            } else if (otherRadioButton.isSelected()) {
+                gender = "Other";
+            }
+            pst.setString(4, ageTF.getText());
+            pst.setString(5, gender);
+            pst.setString(6, addressTF.getText());
+            pst.setString(7, telephoneTF.getText());
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "You have successfully registered!");
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
 }
