@@ -13,9 +13,13 @@ import java.sql.*;
 import java.util.*;
 
 public class mainUI {
+
     private JPanel mainPanel;
     private JPanel menuPanel;
     private JPanel productPanel;
+    private JPanel registerPanel;
+    private JPanel loginMenu;
+    
     private JLabel supermarketLabel;
     private JButton productButton;
     private JTable productTable;
@@ -29,7 +33,6 @@ public class mainUI {
     private JTextField descriptionTextField;
     private JButton saveInputButton;
     private JTextField stockTextField;
-    private JPanel loginMenu;
     private JButton loginButton;
     private JButton registerButton;
     private JTextField staffNameTextField;
@@ -44,18 +47,8 @@ public class mainUI {
     private JButton backButton1;
     private JButton signUpButton;
     private JTextField addressTF;
-    private JPanel registerPanel;
     private JTextField passwordTF;
-
-    // test
-    //Set<String> password = new HashSet<String>();
-
-    /*private void setPassword() {
-        password.add("Password");
-        password.add("Bruh");
-        password.add("Potato");
-        password.add("ImStaff");
-    }*/
+    private JButton backButtonMM;
 
     public mainUI() {
         // Data catch from SQL
@@ -64,9 +57,7 @@ public class mainUI {
         // Data to start
         createSortCombo();
         createOrderCombo();
-        //setPassword(); // This is only for test before
         visibilityatStart();
-
 
         sortCombo.addActionListener(new ActionListener() {
             @Override
@@ -82,13 +73,18 @@ public class mainUI {
             }
         });
 
-
         // Main menu
         productButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                menuPanel.setVisible(false);
-                productPanel.setVisible(true);
+                visibilityAtProduct();
+            }
+        });
+
+        backButtonMM.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visibilityatStart();
             }
         });
 
@@ -156,28 +152,14 @@ public class mainUI {
         backButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                visibilityatStart();
+               visibilityatStart();
             }
         });
+
     }
 
     public JPanel getMainPanel() {
         return mainPanel;
-    }
-
-    public void visibilityatStart() {
-        loginMenu.setVisible(true);
-        menuPanel.setVisible(false);
-        registerPanel.setVisible(false);
-        productPanel.setVisible(false);
-
-    }
-
-    public void visibilitytoRegister(){
-        loginMenu.setVisible(false);
-        menuPanel.setVisible(false);
-        registerPanel.setVisible(true);
-        productPanel.setVisible(false);
     }
 
     public void fetch(){
@@ -190,6 +172,37 @@ public class mainUI {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e);
         }
+    }
+
+    public void visibilityatStart() {
+        // Show
+        loginMenu.setVisible(true);
+
+        // Hide
+        menuPanel.setVisible(false);
+        registerPanel.setVisible(false);
+        productPanel.setVisible(false);
+
+    }
+
+    public void visibilitytoRegister(){
+        // Show
+        registerPanel.setVisible(true);
+
+        // Hide
+        loginMenu.setVisible(false);
+        menuPanel.setVisible(false);
+        productPanel.setVisible(false);
+    }
+
+    public void visibilityAtProduct() {
+        // Show
+        productPanel.setVisible(true);
+
+        // Hide
+        loginMenu.setVisible(false);
+        menuPanel.setVisible(false);
+        registerPanel.setVisible(false);
     }
 
     public void createSortCombo() {
