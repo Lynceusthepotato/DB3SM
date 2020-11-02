@@ -45,15 +45,17 @@ public class mainUI {
     private JButton signUpButton;
     private JTextField addressTF;
     private JPanel registerPanel;
+    private JTextField passwordTF;
 
-    Set<String> password = new HashSet<String>();
+    // test
+    //Set<String> password = new HashSet<String>();
 
-    private void setPassword() {
+    /*private void setPassword() {
         password.add("Password");
         password.add("Bruh");
         password.add("Potato");
         password.add("ImStaff");
-    }
+    }*/
 
     public mainUI() {
         // Data catch from SQL
@@ -62,7 +64,7 @@ public class mainUI {
         // Data to start
         createSortCombo();
         createOrderCombo();
-        setPassword(); // IDK
+        //setPassword(); // This is only for test before
         visibilityatStart();
 
 
@@ -278,13 +280,21 @@ public class mainUI {
             String inside = staffNameTextField.getText();
             String insidePass = passwordTextField.getText();
             String q = "select * from staff where name=" + " '" + inside + "' ";
-            PreparedStatement pst = conDB.connection.prepareStatement(q);
-            if (password.contains(insidePass)){
-                conDB.result = pst.executeQuery();
-                if (conDB.result.next()){
-                    JOptionPane.showMessageDialog(null, "Welcome back!");
-                    menuPanel.setVisible(true);
-                    loginMenu.setVisible(false);
+            String qpass = "select password from staff where name=" + " '" + inside + "' ";
+            PreparedStatement pst2 = conDB.connection.prepareStatement(qpass);
+            conDB.result = pst2.executeQuery();
+            if (conDB.result.next()){
+                String pass = conDB.result.getString("password");
+                if (pass.contains(insidePass)){
+                    PreparedStatement pst = conDB.connection.prepareStatement(q);
+                    conDB.result = pst.executeQuery();
+                    if (conDB.result.next()){
+                        JOptionPane.showMessageDialog(null, "Welcome back!");
+                        menuPanel.setVisible(true);
+                        loginMenu.setVisible(false);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Your input is incorrect");
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "Your input is incorrect");
                 }
@@ -300,7 +310,7 @@ public class mainUI {
     public void toRegister() {
         try {
             conDB.connection = DriverManager.getConnection(conDB.url, conDB.user, conDB.password);
-            String q = ("insert into staff(staffID, name, email, age, gender, address, telephone) values (?,?,?,?,?,?,?)");
+            String q = ("insert into staff(staffID, name, email, age, gender, address, telephone) values (?,?,?,?,?,?,?,?)");
 
             String findID = ("Select max(staffID) as staffID from staff");
             PreparedStatement pst2 = conDB.connection.prepareStatement(findID);
@@ -329,6 +339,7 @@ public class mainUI {
             pst.setString(5, gender);
             pst.setString(6, addressTF.getText());
             pst.setString(7, telephoneTF.getText());
+            pst.setString(8, passwordTF.getText());
             pst.executeUpdate();
             JOptionPane.showMessageDialog(null, "You have successfully registered!");
 
