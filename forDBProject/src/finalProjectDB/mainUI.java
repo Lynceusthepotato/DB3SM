@@ -13,42 +13,58 @@ import java.sql.*;
 import java.util.*;
 
 public class mainUI {
+    // Panel
+    public JPanel mainPanel;
+    public JPanel menuPanel;
+    public JPanel productPanel;
+    public JPanel registerPanel;
+    public JPanel loginMenu;
 
-    private JPanel mainPanel;
-    private JPanel menuPanel;
-    private JPanel productPanel;
-    private JPanel registerPanel;
-    private JPanel loginMenu;
-    
-    private JLabel supermarketLabel;
+    // TextField
+    public JTextField productIDTextField;
+    public JTextField nameTextField;
+    public JTextField priceTextField;
+    public JTextField descriptionTextField;
+    public JTextField staffNameTextField;
+    public JTextField passwordTextField;
+    public JTextField registerNameTF;
+    public JTextField emailTF;
+    public JTextField ageTF;
+    public JTextField telephoneTF;
+    public JTextField addressTF;
+    public JTextField passwordTF;
+    public JTextField stockTextField;
+    public JTextField searchName;
+
+    // Button
     private JButton productButton;
-    private JTable productTable;
-    private JButton backButton;
-    private JComboBox sortCombo;
-    private JComboBox orderCombo;
-    private JTextField searchName;
-    private JTextField productIDTextField;
-    private JTextField nameTextField;
-    private JTextField priceTextField;
-    private JTextField descriptionTextField;
     private JButton saveInputButton;
-    private JTextField stockTextField;
-    private JButton loginButton;
-    private JButton registerButton;
-    private JTextField staffNameTextField;
-    private JTextField passwordTextField;
-    private JTextField registerNameTF;
-    private JTextField emailTF;
-    private JTextField ageTF;
-    private JTextField telephoneTF;
-    private JRadioButton maleRadioButton;
-    private JRadioButton femaleRadioButton;
-    private JRadioButton otherRadioButton;
+    private JButton backButton;
     private JButton backButton1;
     private JButton signUpButton;
-    private JTextField addressTF;
-    private JTextField passwordTF;
     private JButton backButtonMM;
+    private JButton loginButton;
+    private JButton registerButton;
+
+    // Label
+    private JLabel supermarketLabel;
+
+    // Table
+    public JTable productTable;
+
+    // ComboBox
+    public JComboBox sortCombo;
+    public JComboBox orderCombo;
+
+    // RadioButton
+    public JRadioButton maleRadioButton;
+    public JRadioButton femaleRadioButton;
+    public JRadioButton otherRadioButton;
+
+
+    visibilityManager vm = new visibilityManager(this);
+    functions f = new functions(this, vm);
+
 
     public mainUI() {
         // Data catch from SQL
@@ -57,19 +73,19 @@ public class mainUI {
         // Data to start
         createSortCombo();
         createOrderCombo();
-        visibilityatStart();
+        vm.visibilityatStart();
 
         sortCombo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sortComboChange();
+                f.sortComboChange();
             }
         });
 
         orderCombo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                orderComboChange();
+                f.orderComboChange();
             }
         });
 
@@ -77,14 +93,14 @@ public class mainUI {
         productButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                visibilityAtProduct();
+                vm.visibilityAtProduct();
             }
         });
 
         backButtonMM.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                visibilityatStart();
+                vm.visibilityatStart();
             }
         });
 
@@ -100,14 +116,14 @@ public class mainUI {
         searchName.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                searchByName();
+                f.searchByName();
             }
         });
 
         saveInputButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                insertIntoTable();
+                f.insertIntoTable();
                 fetch();
             }
         });
@@ -128,14 +144,14 @@ public class mainUI {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loginCheck();
+                f.loginCheck();
             }
         });
 
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                visibilitytoRegister();
+                vm.visibilitytoRegister();
             }
         });
 
@@ -144,7 +160,7 @@ public class mainUI {
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                toRegister();
+                f.toRegister();
             }
         });
 
@@ -152,7 +168,7 @@ public class mainUI {
         backButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               visibilityatStart();
+                vm.visibilityatStart();
             }
         });
 
@@ -162,9 +178,9 @@ public class mainUI {
         return mainPanel;
     }
 
-    public void fetch(){
-        try{
-            conDB.connection = DriverManager.getConnection(conDB.url,conDB.user,conDB.password);
+    public void fetch() {
+        try {
+            conDB.connection = DriverManager.getConnection(conDB.url, conDB.user, conDB.password);
             String q = "Select * from Supermarket.product";
             conDB.statement = conDB.connection.prepareStatement(q);
             conDB.result = conDB.statement.executeQuery(q);
@@ -174,191 +190,11 @@ public class mainUI {
         }
     }
 
-    public void visibilityatStart() {
-        // Show
-        loginMenu.setVisible(true);
-
-        // Hide
-        menuPanel.setVisible(false);
-        registerPanel.setVisible(false);
-        productPanel.setVisible(false);
-
-    }
-
-    public void visibilitytoRegister(){
-        // Show
-        registerPanel.setVisible(true);
-
-        // Hide
-        loginMenu.setVisible(false);
-        menuPanel.setVisible(false);
-        productPanel.setVisible(false);
-    }
-
-    public void visibilityAtProduct() {
-        // Show
-        productPanel.setVisible(true);
-
-        // Hide
-        loginMenu.setVisible(false);
-        menuPanel.setVisible(false);
-        registerPanel.setVisible(false);
-    }
-
     public void createSortCombo() {
-        sortCombo.setModel(new DefaultComboBoxModel(new String[] {"ID", "Name", "Price", "Stock"}));
+        sortCombo.setModel(new DefaultComboBoxModel(new String[]{"ID", "Name", "Price", "Stock"}));
     }
 
     public void createOrderCombo() {
-        orderCombo.setModel(new DefaultComboBoxModel(new String[] {"Ascending", "Descending"}));
+        orderCombo.setModel(new DefaultComboBoxModel(new String[]{"Ascending", "Descending"}));
     }
-
-    public void insertIntoTable() {
-        try{
-            conDB.connection = DriverManager.getConnection(conDB.url,conDB.user,conDB.password);
-            String q = ("insert into product(productID, name, price, description, stock) values (?,?,?,?,?)");
-            PreparedStatement pst = conDB.connection.prepareStatement(q);
-            pst.setString(1, productIDTextField.getText());
-            pst.setString(2, nameTextField.getText());
-            pst.setString(3, priceTextField.getText());
-            pst.setString(4, descriptionTextField.getText());
-            pst.setString(5, stockTextField.getText());
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Inserted successfully!");
-
-        } catch (SQLException e){
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }
-
-    public void sortComboChange(){
-        try{
-            String inside = sortCombo.getSelectedItem().toString();
-            if (inside.equals("ID")) {
-                inside = "productID";
-            }
-            conDB.connection = DriverManager.getConnection(conDB.url,conDB.user,conDB.password);
-            String q = ("select * from product order by " + inside);
-            PreparedStatement pst = conDB.connection.prepareStatement(q);
-            conDB.result = pst.executeQuery();
-            productTable.setModel(DbUtils.resultSetToTableModel(conDB.result));
-        } catch (SQLException e){
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }
-
-    public void orderComboChange(){
-        try{
-            String inside = sortCombo.getSelectedItem().toString();
-            if (inside.equals("ID")) {
-                inside = "productID";
-            }
-            String insideOrder = orderCombo.getSelectedItem().toString();
-            if (insideOrder.equals("Ascending")){
-                insideOrder = "ASC";
-            } else {
-                insideOrder = "DESC";
-            }
-            conDB.connection = DriverManager.getConnection(conDB.url,conDB.user,conDB.password);
-            String q = ("select * from product order by " + inside + " " + insideOrder);
-            PreparedStatement pst = conDB.connection.prepareStatement(q);
-            conDB.result = pst.executeQuery();
-            productTable.setModel(DbUtils.resultSetToTableModel(conDB.result));
-        } catch (SQLException e){
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }
-
-    public void searchByName() {
-        try {
-            String q = "";
-            String inside = searchName.getText();
-            conDB.connection = DriverManager.getConnection(conDB.url, conDB.user, conDB.password);
-            if(inside.equals(" ") || inside.equals("")) {
-                q = ("select * from product");
-            } else {
-                q = ("select * from product where name=" + " '" + inside + "' ");
-            }
-            PreparedStatement pst = conDB.connection.prepareStatement(q);
-            conDB.result = pst.executeQuery();
-            productTable.setModel(DbUtils.resultSetToTableModel(conDB.result));
-        } catch (SQLException e){
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }
-
-    public void loginCheck() {
-        try {
-            conDB.connection = DriverManager.getConnection(conDB.url, conDB.user, conDB.password);
-            String inside = staffNameTextField.getText();
-            String insidePass = passwordTextField.getText();
-            String q = "select * from staff where name=" + " '" + inside + "' ";
-            String qpass = "select password from staff where name=" + " '" + inside + "' ";
-            PreparedStatement pst2 = conDB.connection.prepareStatement(qpass);
-            conDB.result = pst2.executeQuery();
-            if (conDB.result.next()){
-                String pass = conDB.result.getString("password");
-                if (pass.contains(insidePass)){
-                    PreparedStatement pst = conDB.connection.prepareStatement(q);
-                    conDB.result = pst.executeQuery();
-                    if (conDB.result.next()){
-                        JOptionPane.showMessageDialog(null, "Welcome back!");
-                        menuPanel.setVisible(true);
-                        loginMenu.setVisible(false);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Your input is incorrect");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Your input is incorrect");
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Your input is incorrect");
-            }
-
-        } catch (SQLException e){
-            JOptionPane.showMessageDialog(null, "Your input is incorrect");
-        }
-    }
-
-    public void toRegister() {
-        try {
-            conDB.connection = DriverManager.getConnection(conDB.url, conDB.user, conDB.password);
-            String q = ("insert into staff(staffID, name, email, age, gender, address, telephone) values (?,?,?,?,?,?,?,?)");
-
-            String findID = ("Select max(staffID) as staffID from staff");
-            PreparedStatement pst2 = conDB.connection.prepareStatement(findID);
-            conDB.result = pst2.executeQuery();
-
-            int bigNum = 1;
-            if (conDB.result.next()){
-                bigNum  = conDB.result.getInt("staffID");
-                bigNum += 1;
-            }
-
-            PreparedStatement pst = conDB.connection.prepareStatement(q);
-
-            pst.setString(1, String.valueOf(bigNum));
-            pst.setString(2, registerNameTF.getText());
-            pst.setString(3, emailTF.getText());
-            String gender = "";
-            if (maleRadioButton.isSelected()) {
-                gender = "Male";
-            } else if (femaleRadioButton.isSelected()) {
-                gender = "Female";
-            } else if (otherRadioButton.isSelected()) {
-                gender = "Other";
-            }
-            pst.setString(4, ageTF.getText());
-            pst.setString(5, gender);
-            pst.setString(6, addressTF.getText());
-            pst.setString(7, telephoneTF.getText());
-            pst.setString(8, passwordTF.getText());
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "You have successfully registered!");
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }
-
 }
